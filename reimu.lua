@@ -28,7 +28,8 @@ end
 local flags = {
 	compiler = "cc",
 	cflags = "-Ofast -flto",
-	downloader = "wget"
+	downloader = "wget",
+	help = "false"
 }
 
 local args = parseargs(arg)
@@ -36,6 +37,19 @@ local args = parseargs(arg)
 for k, v in pairs(args) do
 	if flags[k] ~= nil then
 		flags[k] = v
+	end
+end
+
+local function help()
+	if flags.help == true then
+		print("Reimu is a nob configurator in Lua.")
+		print("")
+		print("Flags:")
+		print(" --compiler=[COMMAND]	The command to use as the C compiler command. (default: cc)")
+		print(' --cflags=[FLAGS]	The flags to use for the C compiler flags. (default: "-Ofast -flto"')
+		print(" --downloader=[COMMAND]	The command to use as the downloader (default: wget)")
+		print(" --help			Prints this help dialog.")
+		os.exit(0)
 	end
 end
 
@@ -236,6 +250,7 @@ local function shscript()
 end
 
 local function main()
+	help()
 	ifexists()
 	includes()
 	detectdownloader()
@@ -244,7 +259,6 @@ local function main()
 	tcflags()
 	finishnob()
 	shscript()
-	print(flags.compiler)
 end
 
 main()
