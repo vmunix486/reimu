@@ -2,15 +2,46 @@
 
 -- Reimu - An autotools-like configure program that creates a nob build script
 
---[[
-TODO:
- - dynamic sources from line (like with the cflags)
- - if wget download fails the first time, try again with "--no-check-certificate"
-]]--
-
 local cflags = "-Ofast -flto"
 local src = '"src/"'
 local build = '"build/"'
+
+--[[
+--	Command line argument parsing
+--]]
+local function parseargs(args)
+	local parsed = {}
+	for i = 1, #args do
+		local arg = args[i]
+		local key, value = arg:match("^%-%-([^=]+)=(.+)$") -- I need to look up how this works KEKW
+		if key and value then
+			parsed[key] = value
+		elseif arg:sub(1, 2) == "--" then
+			parsed[arg:sub(3)] = true
+		else
+			table.insert(parsed, arg)
+		end
+	end
+	return parsed
+end
+
+local flags = {
+	compiler = "cc",
+	cflags = "-Ofast -flto",
+	downloader = "wget"
+}
+
+local args = parseargs(arg)
+
+for k, v in pairs(args) do
+	if flags[k] ~= nil then
+		flags[k] = v
+	end
+end
+
+--[[
+--	End Command line argument parsing
+--]]
 
 local function ifexists()
 	local nobc = io.open("nob.c", "r")
@@ -115,6 +146,12 @@ local function download()
 end
 
 local function detectcompiler()
+	-- If flags.compiler is not cc, then set the specified compiler as the compiler
+	if flags.compiler ~= "cc" then
+		compiler = flags.compiler
+		return
+	end
+
 	local ccstatus = detect("cc --version") -- This is --version for the same reason as curl
 	if ccstatus == true then
 		print("cc does exist.")
@@ -156,7 +193,6 @@ local function tcflags()
 	end
 
 	tcflags = table.concat(out, ", ")
-	-- print(tcflags)
 end
 
 local function finishnob()
@@ -208,6 +244,7 @@ local function main()
 	tcflags()
 	finishnob()
 	shscript()
+	print(flags.compiler)
 end
 
 main()
