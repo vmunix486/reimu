@@ -1,2 +1,2 @@
 #!/bin/sh
-rm -rfv nob build/ nob.c nob.h 
+rm -rfv nob build/ nob.c nob.h compile.sh
