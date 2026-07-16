@@ -74,10 +74,18 @@ local function detectdownloader()
 	else
 		print("curl does not exist")
 	end
+
+	print("") -- Red
+	print("\27[31mYikes!\27[0m")
+	print("\27[31mIt seems like you do not have either wget or curl!\27[0m")
+	print("\27[31mYou can download them using your distribution's package manager,\27[0m")
+	print("\27[31mor from compiling them from source:\27[0m")
+	print("") -- Blue onwards
+	print("\27[34mhttps://www.gnu.org/software/wget/\27[0m")
+	print("\27[34mhttps://curl.se/\27[0m")
 end
 
 local function download()
-	--print("In the function download(), the variable 'downloader' is " .. downloader)
 	if downloader == "wget" then
 		print("Downloading the latest nob.h from GitHub with wget...")
 		os.execute("wget https://raw.githubusercontent.com/tsoding/nob.h/refs/heads/main/nob.h >/dev/null 2>&1")
