@@ -57,7 +57,9 @@ local function detect(cmd)
 end
 
 local function detectdownloader()
-	local wgetstatus = detect("wget")
+	local wgetstatus = detect("wget --version")
+	-- If the user is using wget 1.x, then just a plain wget command will give a status code of 1, so use --version
+	-- for both wget 1.x and wget2.
 	if wgetstatus == true then
 		print("wget does exist")
 		downloader = "wget"
@@ -66,7 +68,8 @@ local function detectdownloader()
 		print("wget does not exist")
 	end
 
-	local curlstatus = detect("curl --version") -- For some reason, just running "curl" gives an exit code of 2. --version gives 0.
+	local curlstatus = detect("curl --version")
+	-- For some reason, just running "curl" gives an exit code of 2. --version gives 0.
 	if curlstatus == true then
 		print("curl does exist")
 		downloader = "curl"
@@ -88,11 +91,10 @@ end
 local function download()
 	if downloader == "wget" then
 		print("Downloading the latest nob.h from GitHub with wget...")
-		os.execute("wget https://raw.githubusercontent.com/tsoding/nob.h/refs/heads/main/nob.h >/dev/null 2>&1")
+		-- July 16, 2026: updated command to use --no-check-certificate so it works on Windows XP
+		os.execute("wget https://raw.githubusercontent.com/tsoding/nob.h/refs/heads/main/nob.h --no-check-certificate >/dev/null 2>&1")
 		print("Finished downloading. Moving on.")
 	end
-	-- NOTE: If wget fails, such as using an old verison of wget, certificates, or operating system, then if this command fails,
-	-- It should detect that and try and run with --no-check-certificates. We need to add that soon.
 
 	if downloader == "curl" then
 		print("Downloading the latest nob.h from GitHub with curl...")
