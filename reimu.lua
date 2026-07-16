@@ -29,7 +29,8 @@ local flags = {
 	compiler = "cc",
 	cflags = "-Ofast -flto",
 	downloader = "wget",
-	help = "false"
+	help = "false",
+	clean = "false"
 }
 
 local args = parseargs(arg)
@@ -48,9 +49,22 @@ local function help()
 		print(" --compiler=[COMMAND]	The command to use as the C compiler command. (default: cc)")
 		print(' --cflags=[FLAGS]	The flags to use for the C compiler flags. (default: "-Ofast -flto"')
 		print(" --downloader=[COMMAND]	The command to use as the downloader (default: wget)")
+		print(" --clean			Cleans out all the files generated. Useful for git commits.")
 		print(" --help			Prints this help dialog.")
 		os.exit(0)
 	end
+end
+
+local function clean()
+	if flags.clean == true then
+		os.execute("rm -rfv nob build/ nob.c nob.h compile.sh")
+		os.exit(0)
+	end
+end
+
+local function flagmain()
+	help()
+	clean()
 end
 
 --[[
@@ -250,7 +264,7 @@ local function shscript()
 end
 
 local function main()
-	help()
+	flagmain()
 	ifexists()
 	includes()
 	detectdownloader()
