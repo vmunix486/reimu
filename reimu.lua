@@ -245,7 +245,7 @@ local function finishnob()
 
 	-- This is the special mojo sauce line
 	-- Get all the sauce you need!
-	io.write('	nob_cmd_append(&cmd, "' .. compiler .. '", ' .. tcflags .. ', "-o", BUILD_FOLDER"test", SRC_FOLDER"test.c");\n')
+	io.write('	nob_cmd_append(&cmd, "' .. compiler .. '", ' .. tcflags .. ', "-o", BUILD_FOLDER"yukkuri", SRC_FOLDER"yukkuri.c");\n')
 	io.write("	if (!nob_cmd_run(&cmd)) return 1;\n")
 	io.write("	return 0;\n")
 
