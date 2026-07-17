@@ -77,26 +77,16 @@ end
 --]]
 
 local function ifexists()
+	print("Cleaning up before continuing...")
+
 	local nobc = io.open("nob.c", "r")
 	if nobc then
-		print("Preexisting nob.c exists.")
-		print("Deleting...")
 		os.remove("nob.c")
-		print("Continuing...")
-	else
-		print("nob.c does not already exist.")
-		print("Continuing...")
 	end
 
 	local nobh = io.open("nob.h", "r")
 	if nobh then
-		print("Preexisting nob.h exists.")
-		print("Deleting...")
 		os.remove("nob.h")
-		print("Continuing...")
-	else
-		print("nob.h does not already exist.")
-		print("We will download it in a sec.")
 	end
 
 	local sh = io.open("compile.sh", "r")
