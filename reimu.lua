@@ -32,7 +32,8 @@ local flags = {
 	help = "false",
 	clean = "false",
 	compile = "false",
-	shell = "false"
+	shell = "false",
+	cross = "false",
 }
 
 local args = parseargs(arg)
@@ -53,6 +54,7 @@ local function help()
 		print(' --cflags=[FLAGS]	The flags to use for the C compiler flags. (default: "-Ofast -flto"')
 		print(" --downloader=[COMMAND]	The command to use as the downloader (default: wget)")
 		print(" --compile		Automatically compiles and runs nob to compile after configuring.")
+		print(" --cross		Uses specified compiler as if it was a cross compiler. Skips the testing. Does not work with --compile.")
 		print(" --shell		Make a shell script equivelant to --compile. Deprecated in favor of --compile.")
 		print(" --clean		Cleans out all the files generated. Useful for git commits.")
 		print(" --help			Prints this help dialog.")
@@ -67,9 +69,18 @@ local function clean()
 	end
 end
 
+local function cross()
+	if flags.cross == true then
+		cross = true
+	else
+		cross = false
+	end
+end
+
 local function flagmain()
 	help()
 	clean()
+	cross()
 end
 
 --[[
@@ -188,17 +199,6 @@ local function detectcompiler()
 		print("cc does not exist.")
 	end
 
-	-- This is here for filler. This probably does not support running on Windows at all KEKW
-	-- !!!AT THE MOMENT!!!
-	local clstatus = detect("cl")
-	if clstatus == true then
-		print("cl does exist.")
-		compiler = "cl"
-		return
-	else
-		print("cl does not exist.")
-	end
-
 	-- Oooooh fancy schmancy are we?
 	print("")
 	print("\27[31mYikes!\27[0m")
@@ -229,19 +229,26 @@ local function testcompiler()
 		print("Maybe check the cflags?")
 	end
 
-	local test1programstatus = os.execute("./test1")
-	if test1programstatus == true then
-		print("First test program works! Huzzah!")
+	if cross == true then
+		print("Skipping running the program...")
+		print("You are putting a lot of trust into your cross compiler...")
 		os.remove("test1")
 		os.remove("test1.c")
 	else
-		print("The test program (which returns exit code 0) did not return 0.")
-		print("I am at a loss of words as of how this is possible.")
-		print("")
-		print("FIX YOUR COMPILER!!!")
-		os.remove("test1")
-		os.remove("test1.c")
-		os.exit(1)
+		local test1programstatus = os.execute("./test1")
+		if test1programstatus == true then
+			print("First test program works! Huzzah!")
+			os.remove("test1")
+			os.remove("test1.c")
+		else
+			print("The test program (which returns exit code 0) did not return 0.")
+			print("I am at a loss of words as of how this is possible.")
+			print("")
+			print("FIX YOUR COMPILER!!!")
+			os.remove("test1")
+			os.remove("test1.c")
+			os.exit(1)
+		end
 	end
 end
 
@@ -304,6 +311,17 @@ local function shscript()
 end
 
 local function compile()
+	if flags.compile == true and flags.cross == true then
+		print("")
+		print("Sorry, but you have to compile nob.c with your system compiler manually.")
+		print("When you set --compiler and --cross, it sets the same variable to everything for the compiler,")
+		print("which is usually expected to make code for the same machine that you are compiling on,")
+		print("and not cross compilation.")
+		print("")
+		print("Sorry for the inconveniance. You can figure it out on your own if you want.")
+		print("Pull Requests are free and greatly appreciated.")
+		return
+	end
 	if flags.compile == true then
 		print("Compiling nob...")
 		os.execute(compiler .. " " .. cflags .. " " .. " nob.c -o nob") -- WHY LUA WHY!?!??!?!?!?!?!?!
