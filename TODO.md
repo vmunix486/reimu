@@ -9,3 +9,5 @@
  - Compiler defaults for different platforms (gcc for Most Unixes, LLVM/Clang for MacOS, i686-w64-mingw32-gcc for MSYS2 WinXP)
  - Test on pure Windows (no MSYS2)
  - Add more C source examples (Raylib example, 2 separate C files)
+ - Add support for Termux (Android)
+ - Add support for Clang/GCC detection (with `#ifdef __GNU_C__` and `#ifdef __clang__`)
