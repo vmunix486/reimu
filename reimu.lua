@@ -209,6 +209,30 @@ local function detectcompiler()
 	print("\27[31mIf you just do not have a C compiler... Womp Womp.\27[0m")
 end
 
+local function detectheaders(header)
+	local file = io.open(header, "r")
+	if file then
+		print(header .. " found.")
+		io.close(file)
+		return 0
+	else
+		print(header .. " NOT found.")
+		io.close(file)
+		return 1
+	end
+end
+
+local function headers()
+	detectheaders("/usr/include/stdio.h")
+	if detectheaders("/usr/include/raylib.h") == 1 then
+		if detectheaders("/usr/local/include/raylib.h") == 1 then
+			print("raylib.h could not be found.")
+			print("Use --with-raylib={DIR} to specify a directory.")
+			os.exit(1)
+		end
+	end
+end
+
 local function testcompiler()
 	print("Testing " .. compiler  .. "...")
 	
@@ -337,6 +361,7 @@ local function main()
 	detectdownloader()
 	download()
 	detectcompiler()
+	headers()
 	testcompiler()
 	tcflags()
 	finishnob()
